@@ -69,11 +69,11 @@
             android:layout_weight="1"/>
 
         <Button
-            android:id="@+id/btn"
+            android:id="@+id/sendbt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="send"
-            android:onClick="sendbt"/>
+            android:onClick="sendmail"/>
 
         <Space
             android:layout_width="match_parent"

@@ -126,4 +126,4 @@ public class locations extends AppCompatActivity {
     public void btn(View view) {
         updateGPS();
     }
-}}
+}
