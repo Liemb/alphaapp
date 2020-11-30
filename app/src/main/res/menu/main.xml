@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="authentication"
+        android:orderInCategory="100" />
+
+    <item
+        android:title="location"
+        android:orderInCategory="200" />
+
+    <item
+        android:title="camera"
+        android:orderInCategory="300" />
+
+    <item
+        android:title="csv"
+        android:orderInCategory="400" />
+
+    <item
+        android:title="mail"
+        android:orderInCategory="500" />
+</menu>
