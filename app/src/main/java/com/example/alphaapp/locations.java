@@ -2,7 +2,10 @@ package com.example.alphaapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,121 +16,134 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 
 import java.security.Permissions;
 
 public class locations extends AppCompatActivity {
-    public static final int PERMISSIONS_FINE_LOCATION=99;
     /**
      * references to UI objects
      */
     TextView tv1,tv2;
+    Button btlocation;
 
     /**
      * Google's API for location services.
      */
     FusedLocationProviderClient fusedLocationProviderClient;
 
-    LocationRequest locationRequest;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_locations);
 
-        /**
-         * give each UI variable a value
-         */
-
 
         tv1=(TextView) findViewById(R.id.tv1);
         tv2=(TextView) findViewById(R.id.tv2);
+        btlocation = (Button) findViewById(R.id.btlocation);
 
-        /**
-         * Set all properties of locationRequest.
-         */
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
+                locations.this
+        );
 
-        locationRequest=new LocationRequest();
-        locationRequest.setInterval(30000);
-        locationRequest.setFastestInterval(5000);
-        locationRequest.setPriority(100);
-
-
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        switch(requestCode){
-            case PERMISSIONS_FINE_LOCATION:
-                if(grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                    updateGPS();
+        btlocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //check condition
+                if (ActivityCompat.checkSelfPermission(locations.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(locations.this,Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    getCurrentLocation();
                 }
                 else{
-                    Toast.makeText(this,"this apps requires permission to be granted in order to work properly",Toast.LENGTH_SHORT).show();
-                    finish();
+                    ActivityCompat.requestPermissions(locations.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION,},100);
                 }
-                break;
-        }
+            }
+        });
+
+
+
+
+
     }
 
     /**
-     * get permissions from the user to track gps
-     * get the current location from the fused client.
-     * update the UI-i.e. set all properties in their associated text view items
+     * checking the permission condition
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
      */
-    private void updateGPS(){
-        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(locations.this);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 100 && grantResults.length > 0 && (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED)){
+            getCurrentLocation();
+        }
+        else {Toast.makeText(getApplicationContext(), "Permission denied.", Toast.LENGTH_SHORT).show();}
+    }
 
-        /**
-         * User provided permission
-         */
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED){
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, new OnSuccessListener<Location>() {
+    /**
+     * getting the location
+     */
+    @SuppressLint("MissingPermission")
+    private void getCurrentLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(
+                Context.LOCATION_SERVICE
+        );
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)||(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))){
+            fusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
                 @Override
-                public void onSuccess(Location location) {
-                    /**
-                     * we got permissions. put the values of location. xxx into the UI components.
-                     */
-                    updateUIValues(location);
+                public void onComplete(@NonNull Task<Location> task) {
+                    Location location = task.getResult();
+                    if (location!=null){ //check condition
+                        tv1.setText(String.valueOf(location.getLatitude()));
+                        tv2.setText(String.valueOf(location.getLongitude()));
+                    }
+                    else {//when the location results are null
+                        LocationRequest locationRequest = new LocationRequest()
+                                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                                .setInterval(10000)
+                                .setFastestInterval(1000)
+                                .setNumUpdates(1);
+                        LocationCallback locationCallback = new LocationCallback(){
+                            @Override
+                            public void onLocationResult(LocationResult locationResult) {
+                                Location location1 =  locationResult.getLastLocation();
+                                tv1.setText(String.valueOf(location1.getLatitude()));
+                                tv2.setText(String.valueOf(location1.getLongitude()));
+                            }
+                        };
+
+                        /**
+                         * request location updates
+                         */
+                        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+
+                    }
                 }
             });
         }
-        else{
-            /**
-             *  permission not granted yet
-             */
-            if (Build.VERSION.SDK_INT>=23){
-                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION} ,PERMISSIONS_FINE_LOCATION);
-            }
+        /**
+         * getting location permission
+         */
+        else {
+            startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
-    }
-
-    /**
-     * Update all of the text view objects with the new location.
-     */
-    private void updateUIValues(Location location) {
-        tv1.setText("lat:"+String.valueOf(location.getLatitude()));
-        tv2.setText("long:"+String.valueOf(location.getLongitude()));
-    }
-
-    /**
-     * a button that starts the location finding in this moment.
-     */
-    public void btn(View view) {
-        updateGPS();
     }
 
 
@@ -146,12 +162,22 @@ public class locations extends AppCompatActivity {
         String st = item.getTitle().toString();
 
         if (st.equals("authentication")){
-            Intent si = new Intent(this, locations.class);
+            Intent si = new Intent(this, MainActivity.class);
             startActivity(si);
         }
 
         if (st.equals("mail")) {
             Intent si = new Intent(this, mails.class);
+            startActivity(si);
+        }
+
+        if (st.equals("camera")) {
+            Intent si = new Intent(this, scamera.class);
+            startActivity(si);
+        }
+
+        if (st.equals("csv")) {
+            Intent si = new Intent(this, csv.class);
             startActivity(si);
         }
 
