@@ -109,6 +109,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(si);
         }
 
+        if (st.equals("csv")) {
+            Intent si = new Intent(this, csv.class);
+            startActivity(si);
+        }
+
         return true;
     }
 }
