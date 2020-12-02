@@ -43,6 +43,10 @@ public class mails extends AppCompatActivity {
         });
 
     }
+
+    /**
+     * getting the mail information and opening the mail screen with the information in it
+     */
     private void sendMail(){
         String recipientList = toet.getText().toString();
         String[] recipients = recipientList.split(",");
@@ -54,34 +58,6 @@ public class mails extends AppCompatActivity {
         intent.putExtra(Intent.EXTRA_EMAIL, recipients);
         intent.putExtra(Intent.EXTRA_SUBJECT, subject);
         intent.putExtra(Intent.EXTRA_TEXT,  message);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         try {
         startActivity(Intent.createChooser(intent, "choose an email client"));}
@@ -110,11 +86,20 @@ public class mails extends AppCompatActivity {
         }
 
         if (st.equals("authentication")) {
-            Intent si = new Intent(this, mails.class);
+            Intent si = new Intent(this, MainActivity.class);
+            startActivity(si);
+        }
+
+        if (st.equals("camera")) {
+            Intent si = new Intent(this, scamera.class);
+            startActivity(si);
+        }
+
+        if (st.equals("csv")) {
+            Intent si = new Intent(this, csv.class);
             startActivity(si);
         }
 
         return true;
     }
-
 }

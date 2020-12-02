@@ -48,6 +48,7 @@ public class csv extends AppCompatActivity {
             fileIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             fileIntent.putExtra(Intent.EXTRA_STREAM, path);
 
+            //opening the mail screen with the file in it
             startActivity(Intent.createChooser(fileIntent, "send mail"));
 
         } catch (Exception e) { e.printStackTrace();

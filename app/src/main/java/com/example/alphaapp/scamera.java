@@ -6,6 +6,8 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
@@ -58,10 +60,10 @@ public class scamera extends AppCompatActivity {
 
 
     /**
-     * This Method Chooses picture from gallery
+     * choose a picture from the gallery
      * @param view
      */
-    public void FileChooser(View view) {
+    public void fileclick(View view) {
         Intent si=new Intent();
         si.setType("image/*");
         si.setAction(Intent.ACTION_GET_CONTENT);
@@ -72,11 +74,11 @@ public class scamera extends AppCompatActivity {
 
 
     /**
-     * This Method Uploads the picture to Fire Base
+     * uploading the picture to the FireBase
      * @param view
      */
 
-    public void FileUploader(View view) {
+    public void upclick(View view) {
         StorageReference Ref=mStorageRef.child(System.currentTimeMillis()+"."+getExtension(imguri));
         Ref.putFile(imguri)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -94,4 +96,41 @@ public class scamera extends AppCompatActivity {
                         // ...
                     }
                 });
-}}
+}
+
+     /**
+     * inflate the menu
+     *
+     * @param menu
+     * @return
+     */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected (MenuItem item){
+        String st = item.getTitle().toString();
+
+        if (st.equals("location")){
+            Intent si = new Intent(this, locations.class);
+            startActivity(si);
+        }
+
+        if (st.equals("mail")) {
+            Intent si = new Intent(this, mails.class);
+            startActivity(si);
+        }
+
+        if (st.equals("authentication")) {
+            Intent si = new Intent(this, MainActivity.class);
+            startActivity(si);
+        }
+
+        if (st.equals("csv")) {
+            Intent si = new Intent(this, csv.class);
+            startActivity(si);
+        }
+
+        return true;
+    }}
