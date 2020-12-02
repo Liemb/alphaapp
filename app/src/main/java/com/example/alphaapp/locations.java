@@ -2,6 +2,7 @@ package com.example.alphaapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +13,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -125,5 +128,33 @@ public class locations extends AppCompatActivity {
      */
     public void btn(View view) {
         updateGPS();
+    }
+
+
+    /**
+     * inflate the menu
+     *
+     * @param menu
+     * @return
+     */
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected (MenuItem item){
+        String st = item.getTitle().toString();
+
+        if (st.equals("authentication")){
+            Intent si = new Intent(this, locations.class);
+            startActivity(si);
+        }
+
+        if (st.equals("mail")) {
+            Intent si = new Intent(this, mails.class);
+            startActivity(si);
+        }
+
+        return true;
     }
 }

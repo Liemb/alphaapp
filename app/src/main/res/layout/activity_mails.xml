@@ -72,8 +72,7 @@
             android:id="@+id/sendbt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="send"
-            android:onClick="sendmail"/>
+            android:text="send"/>
 
         <Space
             android:layout_width="match_parent"

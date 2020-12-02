@@ -91,4 +91,19 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public boolean onOptionsItemSelected (MenuItem item){
+        String st = item.getTitle().toString();
+
+        if (st.equals("location")){
+            Intent si = new Intent(this, locations.class);
+            startActivity(si);
+        }
+
+        if (st.equals("mail")) {
+            Intent si = new Intent(this, mails.class);
+            startActivity(si);
+        }
+
+        return true;
+    }
 }

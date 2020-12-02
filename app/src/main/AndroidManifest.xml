@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.alphaapp">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Alphaapp">
-        <activity android:name=".mails"></activity>
+        <activity android:name=".scamera"></activity>
+        <activity android:name=".mails" />
         <activity android:name=".locations" />
         <activity android:name=".MainActivity">
             <intent-filter>
