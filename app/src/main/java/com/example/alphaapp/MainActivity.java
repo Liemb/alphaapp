@@ -104,6 +104,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(si);
         }
 
+        if (st.equals("camera")) {
+            Intent si = new Intent(this, scamera.class);
+            startActivity(si);
+        }
+
         return true;
     }
 }
